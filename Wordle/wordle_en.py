@@ -1,7 +1,3 @@
-from cgitb import enable
-from turtle import width
-from attr import Attribute
-from matplotlib.pyplot import gray
 import requests
 from bs4 import BeautifulSoup
 import tkinter as tk
@@ -79,7 +75,7 @@ def get_words_online(letters: str) -> list:
             'div', attrs={'class': 'lBlock', 'id': '5-letter-words'}).find_all('a')
     except AttributeError:
         words = []
-        
+
     word_list = []
     for word in words:
         word_list.append(word.text)
@@ -118,21 +114,23 @@ class Window(tk.Tk):
         self.grey_box = tk.Entry(self, font=font1, width=10)
         self.grey_box.grid(row=5, column=0, columnspan=5)
 
+        self.grey_box2 = tk.Entry(self, font=font1, width=10)
+        self.grey_box2.grid(row=6, column=0, columnspan=5)
+
         self.button = tk.Button(
             self, text="Go", font=font1, command=self.read_input)
-        self.button.grid(row=6, column=0, columnspan=5)
+        self.button.grid(row=7, column=0, columnspan=5)
 
-        tk.Label(self,width=10).grid(row=0, column=5, rowspan=6)
+        tk.Label(self, width=10).grid(row=0, column=5, rowspan=6)
 
         self.result_label = tk.Label(
             self, text='Results:', font=font1, width=8)
         self.result_label.grid(row=0, column=6)
 
         self.results = tk.Text(self, width=30, height=20, font=font2)
-        self.results.grid(row=1, column=6, rowspan=6)
+        self.results.grid(row=1, column=6, rowspan=7)
 
         self.results.config(state=tk.DISABLED)
-
 
     def read_input(self):
         green = ''
@@ -145,10 +143,11 @@ class Window(tk.Tk):
             else:
                 self.results.config(state=tk.NORMAL)
                 self.results.delete('1.0', tk.END)
-                self.results.insert(tk.INSERT, 'Write only one letter per box!')
+                self.results.insert(
+                    tk.INSERT, 'Write only one letter per box!')
                 self.results.config(state=tk.DISABLED)
         yellow = self.yellow_box.get()
-        grey = self.grey_box.get()
+        grey = self.grey_box.get() + self.grey_box2.get()
 
         word_list = main(green, yellow, grey)
         self.results.config(state=tk.NORMAL)
@@ -161,14 +160,5 @@ class Window(tk.Tk):
 
 
 if __name__ == "__main__":
-    # pound caret slimy // befog
-
-    # information
-    # green = 'lou_s'
-    # yellow = ''
-    # grey = 'pfndm'
-
-    # print(main(green, yellow, grey))
-
     window = Window()
     window.mainloop()
