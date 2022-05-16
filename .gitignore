@@ -132,3 +132,6 @@ dmypy.json
 # songs:
 Trening/songs.json
 Trening/songs/
+
+# wordle 
+wordle_en.lnk

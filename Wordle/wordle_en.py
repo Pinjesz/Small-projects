@@ -1,3 +1,4 @@
+import tkinter.ttk as ttk
 import requests
 from bs4 import BeautifulSoup
 import tkinter as tk
@@ -87,13 +88,15 @@ class Window(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Wordle helper")
-        self.geometry("800x600")
+        # self.geometry("800x600")
         self.boxes = []
+        self.words = []
         self.place()
 
     def place(self):
         font1 = "none 40 bold"
         font2 = "none 15 bold"
+        font3 = "none 20 bold"
 
         self.green_label = tk.Label(self, text='Green:', font=font1)
         self.green_label.grid(row=0, column=0, columnspan=5)
@@ -132,6 +135,33 @@ class Window(tk.Tk):
 
         self.results.config(state=tk.DISABLED)
 
+        # ------------------------------------------------------------------
+        tk.Label(self, height=2).grid(row=8, column=0, columnspan=6)
+
+        self.sub_frame = tk.Frame(self)
+        self.sub_frame.grid(row=9, column=0, columnspan=7)
+
+        self.del_label = tk.Label(
+            self.sub_frame, text='Delete letter:', font=font3)
+        self.del_label.grid(row=0, column=0)
+
+        self.del_box = tk.Entry(self.sub_frame, font=font3, width=2)
+        self.del_box.grid(row=0, column=1)
+
+        self.from_label = tk.Label(
+            self.sub_frame, text='from column:', font=font3)
+        self.from_label.grid(row=0, column=2)
+
+        self.from_box = ttk.Combobox(self.sub_frame, font=font3, width=2, values=[i for i in range(1,6)])
+        self.from_box.set(1)
+        self.from_box.grid(row=0, column=3)
+
+        tk.Label(self.sub_frame, width=2).grid(row=0, column=4)
+
+        self.del_button = tk.Button(
+            self.sub_frame, text="Remove", font=font3, command=self.remove_by_letter)
+        self.del_button.grid(row=0, column=5)
+
     def read_input(self):
         green = ''
         for box in self.boxes:
@@ -149,12 +179,30 @@ class Window(tk.Tk):
         yellow = self.yellow_box.get()
         grey = self.grey_box.get() + self.grey_box2.get()
 
-        word_list = main(green, yellow, grey)
+        self.words = main(green, yellow, grey)
+        self.display()
+
+    def remove_by_letter(self):
+        try:
+            letter = self.del_box.get()
+            if len(letter) > 1:
+                raise Exception('Give one letter!')
+            col = int(self.from_box.get())
+        except:
+            pass
+        new_words = []
+        for word in self.words:
+            if word[col-1] != letter:
+                new_words.append(word)
+        self.words = new_words
+        self.display()
+
+    def display(self):
         self.results.config(state=tk.NORMAL)
         self.results.delete('1.0', tk.END)
-        for word in word_list:
+        for word in self.words:
             self.results.insert(tk.INSERT, word + '\n')
-        if len(word_list) == 0:
+        if len(self.words) == 0:
             self.results.insert(tk.INSERT, 'NO MATCHES!')
         self.results.config(state=tk.DISABLED)
 
